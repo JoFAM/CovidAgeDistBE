@@ -8,6 +8,7 @@ source("checkPackages.R")
 if(!exists("cases")){
     source("processData.R")
 }
+agegroups <- sort(unique(cases$AGEGROUP))
 
 library(shiny)
 library(shinydashboard)
@@ -39,14 +40,21 @@ body <- dashboardBody(
         
     ), # END fluidRow ageplot
     fluidRow(
-        column(12, align = "center",
+        column(6, align = "center",
                sliderInput("daterange","Select a date range",
                            min = as.Date("2020-03-15"),
                            max = as.Date(Sys.Date()),
                            value = as.Date(c("2020-03-15","2020-05-15")),
                            timeFormat = "%b %d"
-               ) 
-        ) # END column slider
+                           ) 
+               ), # END column slider
+        column(6, align = "center",
+               checkboxGroupInput("agecats",
+                                  "Select age categories",
+                                  choices = agegroups,
+                                  selected = agegroups,
+                                  inline = TRUE)
+               ) #END column checkboxGroupInput
     ) ,# END fluidRow slider
     fluidRow(
         column(width = 2),
@@ -74,7 +82,8 @@ server <- function(input, output) {
         tmp[["counts"]] <- cases[[input$gender]]
         
         # select the values we need: drop 0 because we use a log scale!
-        id <- cases[["REGION"]] == input$region & tmp[["counts"]] != 0
+        id <- cases[["REGION"]] == input$region & 
+            cases[["AGEGROUP"]] %in% input$agecats
         tmp[id,]
     })
     
@@ -106,7 +115,8 @@ server <- function(input, output) {
     # create the other plot
     output$caseplot <- renderPlot({
         ggplot(agedata(), aes(x = DATE, y = counts, fill = AGEGROUP)) +
-            geom_col(position = position_stack(reverse = TRUE)) +
+            geom_col(position = position_stack(reverse = TRUE),
+                     width = 1) +
             labs(x = "Date", y = "Number of cases",
                  fill = "Age group") +
             # Format the X axis for dates
