@@ -21,11 +21,14 @@ tmp <- tryCatch(
 # age group and sex.
 message("Processing data.")
 
+# Missing values in the dataset indicate no counts.
 replaceby0 <- function(x){
   x[is.na(x)] <- 0
   x
 }
 
+# Process data: remove missing values, calculate rolling sums.
+# Cases give 
 cases <- tmp %>%
   na.omit() %>%
   mutate(DATE = as.Date(DATE)) %>%
@@ -38,12 +41,17 @@ cases <- tmp %>%
          Male = replaceby0(M)) %>%
   select(-F, -M) %>%
   group_by(REGION, AGEGROUP) %>%
-  mutate(Female = zoo::rollmean(Female, 7, align = "right",
+  mutate(Female = zoo::rollsum(Female, 7, align = "right",
                                  fill = NA),
-         Male = zoo::rollmean(Male, 7, align = "right",
-                               fill = NA)) %>%
+         Male = zoo::rollsum(Male, 7, align = "right",
+                               fill = NA),
+         All = Female + Male) %>%
   na.omit() %>%
   ungroup()
 
-message("Succes!")
+allregions <- cases %>%
+  group_by(DATE, AGEGROUP) %>%
+  summarise_at(vars(Female, Male, All),
+               sum)
 
+message("Succes!")
