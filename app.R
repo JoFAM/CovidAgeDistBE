@@ -1,16 +1,14 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+#----------------------------------------------------
+# Covid age distribution for Belgium
+# Shiny app as illustration for introduction to Shiny
+# author: Joris Meys
+#----------------------------------------------------
 
-if(!suppressWarnings(library("doesntexist", logical.return = TRUE,
-            quietly = TRUE))){
-    stop("Package needs installing.", call. = FALSE)
-}
+# Check whether the necessary packages are installed.
+# if(!suppressWarnings(library("doesntexist", logical.return = TRUE,
+#             quietly = TRUE))){
+#     stop("Package needs installing.", call. = FALSE)
+# }
 
 library(shiny)
 
