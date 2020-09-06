@@ -7,8 +7,9 @@
 #    http://shiny.rstudio.com/
 #
 
-if(!library("doesntexist", logical.return = TRUE)){
-    stop("Package needs installing.")
+if(!library("doesntexist", logical.return = TRUE,
+            quietly = TRUE)){
+    stop("Package needs installing.", call. = FALSE)
 }
 
 library(shiny)
