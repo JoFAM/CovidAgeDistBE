@@ -41,9 +41,9 @@ cases <- tmp %>%
          Male = replaceby0(M)) %>%
   select(-F, -M) %>%
   group_by(REGION, AGEGROUP) %>%
-  mutate(Female = zoo::rollsum(Female, 7, align = "right",
+  mutate(Female = zoo::rollmean(Female, 7, align = "right",
                                  fill = NA),
-         Male = zoo::rollsum(Male, 7, align = "right",
+         Male = zoo::rollmean(Male, 7, align = "right",
                                fill = NA),
          All = Female + Male) %>%
   na.omit() %>%

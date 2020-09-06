@@ -1,0 +1,4 @@
+The numbers of cases are calculated as a rolling average with a window of
+a week. This is a naive smoothing technique used to avoid big effects of
+differences in reporting between weeks and weekends. The number reported
+for each day is the average of the cases reported the week before.
