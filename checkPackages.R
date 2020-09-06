@@ -1,7 +1,12 @@
 # Checks and loads the necessary packages
 #----------------------------------------
 
-if(!suppressWarnings(library("doesntexist", logical.return = TRUE,
-            quietly = TRUE))){
-    stop("Package needs installing.", call. = FALSE)
+toload <- c("doesntexist","shinydashboard","whatnow")
+
+if(!suppressWarnings(
+  id <- all(sapply(toload, library, logical.return = TRUE))
+)){
+  errmessage <- paste("Following packages need installing:",
+                      toload[!id], collapse = "\n")
+  stop(errmessage, call. = FALSE)
 }
