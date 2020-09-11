@@ -7,12 +7,26 @@ message("Downloading data.")
 # Try to download the data. Construct an informative error message
 # when this doesn't work.
 
-tmp <- tryCatch(
-  read.csv("https://epistat.sciensano.be/Data/COVID19BE_CASES_AGESEX.csv"),
+rawcases <- tryCatch(
+  read.csv("https://epistat.sciensano.be/Data/COVID19BE_CASES_AGESEX.csv",
+           fileEncoding = "UTF8"),
   error = function(e){}, warning = function(w){
     stop("The data file could not be downloaded. The server of epistat might be temporarily down. Check whether you can access\nhttps://epistat.wiv-isp.be/Covid/",
          call. = FALSE)
-  })
+  }) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(DATE) & DATE < Sys.Date()-1)
+
+rawtest <- tryCatch(
+  read.csv("https://epistat.sciensano.be/Data/COVID19BE_tests.csv",
+           fileEncoding = "UTF8"),
+  error = function(e){}, warning = function(w){
+    stop("The data file could not be downloaded. The server of epistat might be temporarily down. Check whether you can access\nhttps://epistat.wiv-isp.be/Covid/",
+         call. = FALSE)
+  }) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(DATE) & DATE < Sys.Date()-1)
+
 
 #----------------------------------------------------------------
 # Process the data :
@@ -27,31 +41,46 @@ replaceby0 <- function(x){
   x
 }
 
-# Process data: remove missing values, calculate rolling sums.
-# Cases give 
-cases <- tmp %>%
+#---------------------------------
+# Process data: all cases and tests
+allcases <- rawcases %>%
+  group_by(DATE) %>%
+  summarise(CASES = sum(CASES)) %>%
+  full_join(rawtest, by = "DATE") %>%
+  mutate(CASES = zoo::rollmean(CASES, 7,fill = NA),
+         TESTS = zoo::rollmean(TESTS_ALL, 7, fill = NA)) %>%
+  select(-TESTS_ALL) %>%
+  na.omit() 
+
+
+# Process data: cases by region and agegroup
+cases <- rawcases %>%
   na.omit() %>%
-  mutate(DATE = as.Date(DATE)) %>%
   group_by(DATE, REGION, AGEGROUP, SEX) %>%
   summarise(CASES = sum(CASES)) %>%
   ungroup() %>%
-  pivot_wider(names_from = SEX,
+  pivot_wider(names_from = c(SEX,REGION),
               values_from = CASES) %>%
-  mutate(Female = replaceby0(F),
-         Male = replaceby0(M)) %>%
-  select(-F, -M) %>%
-  group_by(REGION, AGEGROUP) %>%
-  mutate(Female = zoo::rollmean(Female, 7, align = "right",
-                                 fill = NA),
-         Male = zoo::rollmean(Male, 7, align = "right",
-                               fill = NA),
-         All = Female + Male) %>%
-  na.omit() %>%
-  ungroup()
+  mutate(across(where(is.numeric), replaceby0)) %>%
+  mutate(F_Belgium = F_Brussels + F_Flanders + F_Wallonia,
+         M_Belgium = M_Brussels + M_Flanders +M_Wallonia,
+         All_Belgium = F_Belgium + M_Belgium,
+         All_Flanders = F_Flanders + M_Flanders,
+         All_Wallonia = F_Wallonia + M_Wallonia,
+         All_Brussels = F_Brussels + M_Brussels) %>%
+  pivot_longer(contains("_"),
+               names_to = "TEMP",
+               values_to = "CASES") %>%
+  separate(TEMP, into = c("GENDER","REGION"), sep = "_") %>%
+  pivot_wider(values_from = CASES, names_from = AGEGROUP) %>%
+  mutate(across(where(is.numeric), replaceby0)) %>%
+  pivot_longer(matches("\\d[-+]"), 
+               names_to = "AGEGROUP",
+               values_to = "CASES") %>%
+  group_by(AGEGROUP, GENDER, REGION) %>%
+  mutate(CASES = zoo::rollmean(CASES, 7, align = "right",
+                                                   fill = NA)) %>%
+  na.omit()
 
-allregions <- cases %>%
-  group_by(DATE, AGEGROUP) %>%
-  summarise_at(vars(Female, Male, All),
-               sum)
 
 message("Succes!")
