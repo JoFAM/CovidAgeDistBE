@@ -47,8 +47,8 @@ allcases <- rawcases %>%
   group_by(DATE) %>%
   summarise(CASES = sum(CASES)) %>%
   full_join(rawtest, by = "DATE") %>%
-  mutate(CASES = zoo::rollmean(CASES, 7,fill = NA),
-         TESTS = zoo::rollmean(TESTS_ALL, 7, fill = NA)) %>%
+  mutate(CASES = zoo::rollmean(CASES, 7,fill = NA, align = "right"),
+         TESTS = zoo::rollmean(TESTS_ALL, 7, fill = NA, align = "right")) %>%
   select(-TESTS_ALL) %>%
   na.omit() 
 

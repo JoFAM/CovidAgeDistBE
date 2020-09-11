@@ -5,8 +5,16 @@
 # Create a dashboard header
 header <- dashboardHeader(title = "COVID Age distribution")
 
+menu <- sidebarMenu(
+  menuItem("Age distribution",tabName = "age", 
+           icon = icon("chart-bar")),
+  menuItem("Testing", tabName = "test",
+           icon = icon("chart-line"))
+)
+
 # Create the dashboard sidebar
 side <- dashboardSidebar(
+  menu,
   selectInput("region", label = h3("Select region"),
               choices = c("Belgium","Flanders","Brussels","Wallonia"),
               selected = "Belgium"),
@@ -27,7 +35,9 @@ side <- dashboardSidebar(
 )
 
 # Create the body of the dashboard
-body <- dashboardBody(
+
+agetab <- tabItem(
+  tabName = "age",
   fluidRow(
     column(12,h3(textOutput("thetitle"), align = "center"))
   ),
@@ -41,6 +51,21 @@ body <- dashboardBody(
            p(paste(readLines("Explanation.txt"),collapse="\n"),
              style="text-align:justify;color:black;background-color:lavender;padding:15px;border-radius:10px")),
     column(width = 2)
+  )
+)
+
+testtab <- tabItem(
+  tabName = "test",
+  fluidRow(
+    plotOutput("testplot")
+  )
+)
+
+
+body <- dashboardBody(
+  tabItems(
+    agetab,
+    testtab
   )
 ) # END dashboardBody
 
