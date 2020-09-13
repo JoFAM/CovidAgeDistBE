@@ -34,12 +34,19 @@ function(input, output) {
     
     # Create the plot
     output$ageplot <- renderPlot({
+        if(input$relativeage == "rel"){
+            var <- sym("RELCASES") 
+            lab <- "Counts\nper 100k"
+        }  else {
+            var <- sym("CASES")
+            lab <- "Counts"
+        }
         
-        ggplot(agedata(), mapping = aes(x=DATE,y=AGEGROUP, fill = CASES)) +
+        ggplot(agedata(), mapping = aes(x=DATE,y=AGEGROUP, fill = !!var)) +
             geom_raster() +
             theme_minimal() +
             labs(x = "Date", y ="Age group",
-                 fill = "Counts") +
+                 fill = lab) +
             # Format the X axis for dates
             scale_x_date(date_labels = "%b %d") +
             scale_fill_viridis_c(option = "B") +
@@ -49,6 +56,13 @@ function(input, output) {
     
     # create the other plot
     output$caseplot <- renderPlot({
+        # if(input$relativeage == "rel"){
+        #     var <- sym("RELCASES") 
+        #     lab <- "Number of cases per 100k"
+        # }  else {
+        #     var <- sym("CASES")
+        #     lab <- "Number of cases"
+        # }
         ggplot(agedata(), aes(x = DATE, y = CASES, fill = AGEGROUP)) +
             geom_col(position = position_stack(reverse = TRUE),
                      width = 1) +
@@ -64,6 +78,7 @@ function(input, output) {
         pdata <- slice %>%
             mutate(CASES = CASES * 25) %>%
             pivot_longer(c(TESTS,CASES)) 
+        mid <- with(slice, max(CASES/TESTS*50))
         
         p1 <- ggplot(pdata, aes(x = DATE, y = value, color = name)) +
             geom_line(size = 2) +
@@ -73,8 +88,10 @@ function(input, output) {
             labs(color = "")
         p2 <- ggplot(slice, aes(x = DATE, y = 1, fill = CASES/TESTS*100)) +
             geom_raster() + theme_void() +
-            scale_fill_gradient(low = "white", high = "darkred", 
-                                limits = c(0,NA)) +
+            scale_fill_gradient2(low = "white", high = "#200000",
+                                 mid = "#d80000",
+                                limits = c(0,NA),
+                                midpoint = mid) +
             labs(fill = "% positive") 
         
         (p2 + ggtitle("Evolution of Belgian covid tests and cases")) / p1 +

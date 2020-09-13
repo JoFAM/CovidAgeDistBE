@@ -15,22 +15,11 @@ menu <- sidebarMenu(
 # Create the dashboard sidebar
 side <- dashboardSidebar(
   menu,
-  selectInput("region", label = h3("Select region"),
-              choices = c("Belgium","Flanders","Brussels","Wallonia"),
-              selected = "Belgium"),
-  selectInput("gender",label = h3("Select gender"),
-              choices = c("Male" = "M","Female" = "F","All"),
-              selected = "All"),
   sliderInput("daterange","Select a date range",
               min = as.Date("2020-03-15"),
               max = as.Date(Sys.Date() - 4),
               value = c(as.Date("2020-03-15"),Sys.Date() - 4),
               timeFormat = "%b %d"),
-  checkboxGroupInput("agecats",
-                     "Select age categories",
-                     choices = agegroups,
-                     selected = agegroups,
-                     inline = TRUE),
   actionButton("closed","CLOSE")
 )
 
@@ -46,6 +35,35 @@ agetab <- tabItem(
     column(6,plotOutput("caseplot"))
   ),# END PLOTS
   fluidRow(
+    column(2,align = "center",
+    selectInput("region", label = "Select region",
+                choices = c("Belgium","Flanders","Brussels","Wallonia"),
+                selected = "Belgium")),
+    column(2,align = "center",
+    selectInput("gender",label = "Select gender",
+                choices = c("Male" = "M","Female" = "F","All"),
+                selected = "All")),
+    column(2,
+           awesomeRadio(inputId = "relativeage",
+                           label = "Select variable for heatmap",
+                           choices = c("Absolute counts" = "abs",
+                                       "Infections per 100 k" = "rel"),
+                           status = "primary",
+                        checkbox = TRUE)),
+    column(4, offset = 1, align = "center",
+          checkboxGroupButtons("agecats",
+                             "Select age categories",
+                             choices = agegroups,
+                             selected = agegroups,
+                             justified = FALSE,
+                             individual = TRUE,
+                             status = "primary",
+                             checkIcon = list(yes = icon("ok", 
+                                                         lib = "glyphicon"), 
+                                              no = icon("remove", 
+                                                        lib = "glyphicon"))))
+  ),
+  fluidRow(
     column(width = 2),
     column(width = 8,
            p(paste(readLines("Explanation.txt"),collapse="\n"),
@@ -57,7 +75,10 @@ agetab <- tabItem(
 testtab <- tabItem(
   tabName = "test",
   fluidRow(
-    plotOutput("testplot")
+    column(6,
+           plotOutput("testplot")
+           )
+    
   )
 )
 

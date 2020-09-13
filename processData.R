@@ -52,6 +52,7 @@ allcases <- rawcases %>%
   select(-TESTS_ALL) %>%
   na.omit() 
 
+n <- read.csv("AgedistPopBe.csv")
 
 # Process data: cases by region and agegroup
 cases <- rawcases %>%
@@ -80,7 +81,9 @@ cases <- rawcases %>%
   group_by(AGEGROUP, GENDER, REGION) %>%
   mutate(CASES = zoo::rollmean(CASES, 7, align = "right",
                                                    fill = NA)) %>%
-  na.omit()
+  na.omit() %>%
+  left_join(n, by = c("AGEGROUP","REGION","GENDER")) %>%
+  mutate(RELCASES = CASES/POP * 100000)
 
 
 message("Succes!")

@@ -5,7 +5,8 @@ toload <- c("dplyr",
             "tidyr",
             "shinydashboard",
             "ggplot2",
-            "patchwork")
+            "patchwork",
+            "shinyWidgets")
 
 # library gives a warning when package cannot be found. 
 # character.only forces library to only accept character values.
