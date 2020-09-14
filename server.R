@@ -3,6 +3,11 @@
 # The server side does the actual calculations etc.
 function(input, output) {
     
+    # Reactive values that store the plots
+    plotheatmap <- reactiveVal()
+    plotagebar <- reactiveVal()
+    plottests <- reactiveVal()
+    
     # Data selection for the plot
     agedata <- reactive({
         datelim <- input$daterange
@@ -42,7 +47,8 @@ function(input, output) {
             lab <- "Counts"
         }
         
-        ggplot(agedata(), mapping = aes(x=DATE,y=AGEGROUP, fill = !!var)) +
+        plotheatmap <- 
+            ggplot(agedata(), mapping = aes(x=DATE,y=AGEGROUP, fill = !!var)) +
             geom_raster() +
             theme_minimal() +
             labs(x = "Date", y ="Age group",
@@ -51,7 +57,9 @@ function(input, output) {
             scale_x_date(date_labels = "%b %d") +
             scale_fill_viridis_c(option = "B") +
             ggtitle("Average count per day over the previous week")
-            
+        
+        plotheatmap(plotheatmap)
+        plotheatmap    
     })
     
     # create the other plot
@@ -63,13 +71,17 @@ function(input, output) {
         #     var <- sym("CASES")
         #     lab <- "Number of cases"
         # }
-        ggplot(agedata(), aes(x = DATE, y = CASES, fill = AGEGROUP)) +
+        plotagebar <- 
+            ggplot(agedata(), aes(x = DATE, y = CASES, fill = AGEGROUP)) +
             geom_col(position = position_stack(reverse = TRUE),
                      width = 1) +
             labs(x = "Date", y = "Number of cases",
                  fill = "Age group") +
             # Format the X axis for dates
             scale_x_date(date_labels = "%b %d") 
+        
+        plotagebar(plotagebar)
+        plotagebar
     })
     
     output$testplot <- renderPlot({
@@ -94,9 +106,45 @@ function(input, output) {
                                 midpoint = mid) +
             labs(fill = "% positive") 
         
-        (p2 + ggtitle("Evolution of Belgian covid tests and cases")) / p1 +
+        plottests <- 
+            (p2 + ggtitle("Evolution of Belgian covid tests and cases")) / p1 +
             plot_layout(heights = c(1,8), guides = 'collect')
+        
+        plottests(plottests)
+        plottests
     })
+    
+    # Downloadhandlers
+    
+    output$downloadheatmap <- downloadHandler(
+        filename = "heatmap.png",
+        content = function(x){
+            req(plotheatmap())
+            
+            p <- plotheatmap()
+            ggsave(x, p, width = 8, height = 5)
+        }
+    )
+    
+    output$downloadagebar <- downloadHandler(
+        filename = "agebar.png",
+        content = function(x){
+            req(plotagebar())
+            
+            p <- plotagebar()
+            ggsave(x, p, width = 8, height = 5)
+        }
+    )
+    
+    output$downloadtest <- downloadHandler(
+        filename = "testevolution.png",
+        content = function(x){
+            req(plottests())
+            
+            p <- plottests()
+            ggsave(x, p, width = 8, height = 5)
+        }
+    )
     
     observeEvent(input$closed,{
         stopApp()

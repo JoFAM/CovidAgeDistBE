@@ -31,8 +31,10 @@ agetab <- tabItem(
     column(12,h3(textOutput("thetitle"), align = "center"))
   ),
   fluidRow(
-    column(6,plotOutput("ageplot")),
-    column(6,plotOutput("caseplot"))
+    column(6,plotOutput("ageplot"),
+           downloadButton("downloadheatmap")),
+    column(6,plotOutput("caseplot"),
+           downloadButton("downloadagebar"))
   ),# END PLOTS
   fluidRow(
     column(2,align = "center",
@@ -76,7 +78,8 @@ testtab <- tabItem(
   tabName = "test",
   fluidRow(
     column(6,
-           plotOutput("testplot")
+           plotOutput("testplot"),
+           downloadButton("downloadtest")
            )
     
   )
