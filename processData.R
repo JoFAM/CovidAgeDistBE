@@ -27,6 +27,15 @@ rawtest <- tryCatch(
   mutate(DATE = as.Date(DATE)) %>%
   filter(!is.na(DATE) & DATE < Sys.Date()-1)
 
+rawhospit <- tryCatch(
+  read.csv("https://epistat.sciensano.be/Data/COVID19BE_HOSP.csv",
+           fileEncoding = "UTF8"),
+  error = function(e){}, warning = function(w){
+    stop("The data file could not be downloaded. The server of epistat might be temporarily down. Check whether you can access\nhttps://epistat.wiv-isp.be/Covid/",
+         call. = FALSE)
+  }) %>%
+  mutate(DATE = as.Date(DATE)) %>%
+  filter(!is.na(DATE) & DATE < Sys.Date()-1)
 
 #----------------------------------------------------------------
 # Process the data :
@@ -39,6 +48,17 @@ message("Processing data.")
 replaceby0 <- function(x){
   x[is.na(x)] <- 0
   x
+}
+
+# Calculate the change
+changeabsolute <- function(x){
+  n <- length(x)
+  c(rep(NA,7), (x[8:n] - x[1:(n-7)]))
+}
+  
+changepercent <- function(x){
+  n <- length(x)
+  c(rep(NA,7), (x[8:n] - x[1:(n-7)])/ x[1:(n-7)] * 100 )
 }
 
 #---------------------------------
@@ -83,7 +103,10 @@ cases <- rawcases %>%
                                                    fill = NA)) %>%
   na.omit() %>%
   left_join(n, by = c("AGEGROUP","REGION","GENDER")) %>%
-  mutate(RELCASES = CASES/POP * 100000)
+  mutate(RELCASES = CASES/POP * 100000,
+         CHANGE = changeabsolute(CASES),
+         RELCHANGE = changeabsolute(RELCASES),
+         PERCHANGE = changepercent(CASES))
 
 
 message("Succes!")

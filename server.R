@@ -42,10 +42,38 @@ function(input, output) {
         if(input$relativeage == "rel"){
             var <- sym("RELCASES") 
             lab <- "Counts\nper 100k"
-        }  else {
+            fillscale <- scale_fill_viridis_c(option = "B")
+            titl <- "Average count per day over the previous week"
+        } else if(input$relativeage == "abs") {
             var <- sym("CASES")
             lab <- "Counts"
-        }
+            fillscale <- scale_fill_viridis_c(option = "B")
+            titl <- "Average count per day over the previous week"
+        } else if(input$relativeage == "perchange"){
+            var <- sym("PERCHANGE")
+            lab <- "% Change"
+            fillscale <- scale_fill_gradient2(low = "darkblue",
+                                              mid = "white",
+                                              high = "darkred",
+                                              midpoint = 0)
+            titl <- "Relative change in average count per day from the previous week"
+        } else if(input$relativeage == "change"){
+            var <- sym("CHANGE")
+            lab <- "Change"
+            fillscale <- scale_fill_gradient2(low = "darkblue",
+                                              mid = "white",
+                                              high = "darkred",
+                                              midpoint = 0)
+            titl <- "Change in average count per day from the previous week"
+        } else if(input$relativeage == "relchange"){
+            var <- sym("RELCHANGE")
+            lab <- "Change\nper 100k"
+            fillscale <- scale_fill_gradient2(low = "darkblue",
+                                              mid = "white",
+                                              high = "darkred",
+                                              midpoint = 0)
+            titl <- "Change in average count per day from the previous week"
+        } 
         
         plotheatmap <- 
             ggplot(agedata(), mapping = aes(x=DATE,y=AGEGROUP, fill = !!var)) +
@@ -55,8 +83,8 @@ function(input, output) {
                  fill = lab) +
             # Format the X axis for dates
             scale_x_date(date_labels = "%b %d") +
-            scale_fill_viridis_c(option = "B") +
-            ggtitle("Average count per day over the previous week")
+            fillscale +
+            ggtitle(titl)
         
         plotheatmap(plotheatmap)
         plotheatmap    
