@@ -84,7 +84,8 @@ function(input, output) {
             # Format the X axis for dates
             scale_x_date(date_labels = "%b %d") +
             fillscale +
-            ggtitle(titl)
+            ggtitle(titl) + caption +
+            theme(plot.tag.position = "bottomright")
         
         plotheatmap(plotheatmap)
         plotheatmap    
@@ -106,7 +107,9 @@ function(input, output) {
             labs(x = "Date", y = "Number of cases",
                  fill = "Age group") +
             # Format the X axis for dates
-            scale_x_date(date_labels = "%b %d") 
+            scale_x_date(date_labels = "%b %d") +
+            caption +
+            theme(plot.tag.position = "bottomright")
         
         plotagebar(plotagebar)
         plotagebar
@@ -136,7 +139,9 @@ function(input, output) {
         
         plottests <- 
             (p2 + ggtitle("Evolution of Belgian covid tests and cases")) / p1 +
-            plot_layout(heights = c(1,8), guides = 'collect')
+            plot_layout(heights = c(1,8), guides = 'collect') +
+            caption +
+            theme(plot.tag.position = "bottomright")
         
         plottests(plottests)
         plottests

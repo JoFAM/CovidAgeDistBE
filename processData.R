@@ -108,5 +108,28 @@ cases <- rawcases %>%
          RELCHANGE = changeabsolute(RELCASES),
          PERCHANGE = changepercent(CASES))
 
+# Process data: hospitalisation
+
+
+totals <- rawhospit %>%
+  select(-c(PROVINCE,NR_REPORTING)) %>%
+  group_by(DATE) %>%
+  summarise(across(where(is.numeric), sum)) %>%
+  mutate(REGION = "All")
+
+hospit <- rbind(select(rawhospit, -c(PROVINCE,NR_REPORTING)),
+                totals) %>%
+  mutate(across(where(is.numeric),
+                ~ zoo::rollmean(., 7, align = "right",
+                                fill = NA))) %>%
+  na.omit()
+
+message("Writing data...")
+write.csv(cases,
+          file = paste0("Data/cases",Sys.Date(),".csv"))
+write.csv(allcases,
+          file = paste0("Data/allcases",Sys.Date(),".csv"))
+write.csv(hospit,
+          file = paste0("Data/hospit", Sys.Date(), ".csv"))
 
 message("Succes!")
