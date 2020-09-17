@@ -7,6 +7,7 @@ function(input, output) {
     plotheatmap <- reactiveVal()
     plotagebar <- reactiveVal()
     plottests <- reactiveVal()
+    plothospit <- reactiveVal()
     
     # Data selection for the plot
     agedata <- reactive({
@@ -147,6 +148,15 @@ function(input, output) {
         plottests
     })
     
+    output$hospitplot <- renderPlot({
+        plothospit <- 
+            ggplot(hospit, aes(x  = DATE, y = TOTAL_IN)) +
+            geom_line() +
+            ggtitle("IN PROGRESS")
+        plothospit(plothospit)
+        plothospit
+    })
+    
     # Downloadhandlers
     
     output$downloadheatmap <- downloadHandler(
@@ -175,6 +185,16 @@ function(input, output) {
             req(plottests())
             
             p <- plottests()
+            ggsave(x, p, width = 8, height = 5)
+        }
+    )
+    
+    output$downloadhospit <- downloadHandler(
+        filename = "hospitalisations.png",
+        content = function(x){
+            req(plothospit())
+            
+            p <- plothospit()
             ggsave(x, p, width = 8, height = 5)
         }
     )

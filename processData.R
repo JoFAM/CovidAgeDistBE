@@ -1,7 +1,7 @@
 #------------------------------------
 # Create the dataset from the website of Epistat
 #------------------------------------
-
+thedate <- Sys.Date()
 message("Downloading data.")
 #-----------------------------------------------------------------
 # Try to download the data. Construct an informative error message
