@@ -32,16 +32,21 @@ if(!length(casefile) | !length(allcasefile)){
 
 
 if(!exists("cases")){
-  cases <- read.csv(file.path("Data",casefile))
+  cases <- read.csv(file.path("Data",casefile)) %>%
+    mutate(DATE = as.Date(DATE))
 }
 if(!exists("allcases")){
-  allcases <- read.csv(file.path("Data",allcasefile))
+  allcases <- read.csv(file.path("Data",allcasefile)) %>%
+  mutate(DATE = as.Date(DATE))
 }
 if(!exists("hospit")){
-  hospit <- read.csv(file.path("Data",hospitfile))
+  hospit <- read.csv(file.path("Data",hospitfile)) %>%
+  mutate(DATE = as.Date(DATE))
 }
 
 caption <- labs(caption = paste("data downloaded from https://epistat.wiv-isp.be/Covid/ on",thedate),
                 tag = "@JorisMeys") 
 
 agegroups <- sort(unique(cases$AGEGROUP))
+
+# source("modules/M_covidplot.R")
