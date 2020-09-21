@@ -7,7 +7,7 @@ function(input, output) {
     plotheatmap <- reactiveVal()
     plotagebar <- reactiveVal()
     plottests <- reactiveVal()
-    plothospit <- reactiveVal()
+#    plothospit <- reactiveVal()
     
     # Data selection for the plot
     agedata <- reactive({
@@ -27,6 +27,14 @@ function(input, output) {
             filter(between(DATE, datelim[1], datelim[2]))
     })
     
+    # hospitdata <- reactive({
+    #     datelim <- input$daterange
+    #     
+    #     id <- hospit[["REGION"]] == input$hregion & 
+    #         between(cases[["DATE"]], datelim[1], datelim[2]) 
+    #     hospit[id,]
+    # })
+    # 
     # Make title: dependent on input changes
     output$thetitle <- renderText({
         paste("Number of cases by age group for",
@@ -148,14 +156,14 @@ function(input, output) {
         plottests
     })
     
-    output$hospitplot <- renderPlot({
-        plothospit <- 
-            ggplot(hospit, aes(x  = DATE, y = TOTAL_IN)) +
-            geom_line() +
-            ggtitle("IN PROGRESS")
-        plothospit(plothospit)
-        plothospit
-    })
+    # output$hospitplot <- renderPlot({
+    #     plothospit <- 
+    #         ggplot(hospit, aes(x  = DATE, y = TOTAL_IN)) +
+    #         geom_line() +
+    #         ggtitle("IN PROGRESS")
+    #     plothospit(plothospit)
+    #     plothospit
+    # })
     
     # Downloadhandlers
     
