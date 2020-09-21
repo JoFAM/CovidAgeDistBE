@@ -20,7 +20,7 @@ side <- dashboardSidebar(
   sliderInput("daterange","Select a date range",
               min = as.Date("2020-03-15"),
               max = as.Date(Sys.Date() - 4),
-              value = c(as.Date("2020-03-15"),Sys.Date() - 4),
+              value = c(Sys.Date()-64,Sys.Date() - 4),
               timeFormat = "%b %d"),
   actionButton("closed","CLOSE")
 )
