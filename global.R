@@ -49,4 +49,4 @@ caption <- labs(caption = paste("data downloaded from https://epistat.wiv-isp.be
 
 agegroups <- sort(unique(cases$AGEGROUP))
 
-# source("modules/M_covidplot.R")
+source("modules/M_covidplot.R")

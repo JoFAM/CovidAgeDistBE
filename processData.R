@@ -25,7 +25,9 @@ rawtest <- tryCatch(
          call. = FALSE)
   }) %>%
   mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(DATE) & DATE < Sys.Date()-1)
+  filter(!is.na(DATE) & DATE < Sys.Date()-1) %>%
+  group_by(DATE) %>%
+  summarise(TESTS_ALL = sum(TESTS_ALL, na.rm = TRUE))
 
 rawhospit <- tryCatch(
   read.csv("https://epistat.sciensano.be/Data/COVID19BE_HOSP.csv",
