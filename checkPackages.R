@@ -30,6 +30,8 @@ if(!all(id)){
                       paste(toload[!id], collapse = "\n"), 
                       sep = "\n")
   stop(errmessage, call. = FALSE)
+} else if(packageVersion("dplyr") <= '1.0.0'){
+  stop("The package dplyr is outdated. Please update this to version 1.0.x, otherwise the code won't work. Best way to do this, is to restart R and reinstall dplyr. You can check the current version using:\npackageVersion('dplyr')", call. = FALSE)
 }
 
 # Get rid of annoying messages
