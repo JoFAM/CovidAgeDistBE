@@ -17,7 +17,7 @@ if(!dir.exists("Data")) dir.create("Data")
 
 casefile <- tail(dir("Data",pattern = "cases.+\\.csv"),1)
 allcasefile <- tail(dir("Data",pattern = "allcases.+\\.csv"),1)
-hospitfile <- tail(dir("Data",pattern = "hospit.+\\.csv"),1)
+# hospitfile <- tail(dir("Data",pattern = "hospit.+\\.csv"),1)
 
 if(!length(casefile) | !length(allcasefile)){
   source("processData.R")
@@ -39,10 +39,10 @@ if(!exists("allcases")){
   allcases <- read.csv(file.path("Data",allcasefile)) %>%
   mutate(DATE = as.Date(DATE))
 }
-if(!exists("hospit")){
-  hospit <- read.csv(file.path("Data",hospitfile)) %>%
-  mutate(DATE = as.Date(DATE))
-}
+# if(!exists("hospit")){
+#   hospit <- read.csv(file.path("Data",hospitfile)) %>%
+#   mutate(DATE = as.Date(DATE))
+# }
 
 caption <- labs(caption = paste("data downloaded from https://epistat.wiv-isp.be/Covid/ on",thedate),
                 tag = "@JorisMeys") 
