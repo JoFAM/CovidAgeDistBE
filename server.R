@@ -95,7 +95,8 @@ function(input, output) {
             fillscale +
             ggtitle(titl) + caption +
             theme(plot.tag.position = "bottomright",
-                  plot.background = element_rect("white"))
+                  plot.background = element_rect(fill="white",
+                                                 color = NA))
         
         plotheatmap(plotheatmap)
         plotheatmap    
@@ -120,7 +121,8 @@ function(input, output) {
             scale_x_date(date_labels = "%b %d") +
             caption +
             theme(plot.tag.position = "bottomright",
-                  plot.background = element_rect("white"))
+                  plot.background = element_rect(fill = "white",
+                                                 color = NA))
         
         plotagebar(plotagebar)
         plotagebar
@@ -153,7 +155,8 @@ function(input, output) {
             plot_layout(heights = c(1,8), guides = 'collect') +
             caption +
             theme(plot.tag.position = "bottomright",
-                  plot.background = element_rect("white"))
+                  plot.background = element_rect(fill = "white",
+                                                 color = NA))
         
         plottests(plottests)
         plottests
