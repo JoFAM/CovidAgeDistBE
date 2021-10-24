@@ -9,9 +9,9 @@ menu <- sidebarMenu(
   menuItem("Age distribution",tabName = "age", 
            icon = icon("chart-bar")),
   menuItem("Testing", tabName = "test",
-           icon = icon("chart-line")),
-  menuItem("Hospitalisations", tabName = "hospit",
-            icon = icon("procedures"))
+            icon = icon("chart-line"))#,
+  # menuItem("Hospitalisations", tabName = "hospit",
+  #           icon = icon("procedures"))
 )
 
 # Create the dashboard sidebar
@@ -90,20 +90,20 @@ testtab <- tabItem(
   )
 )
 
-hospittab <- tabItem(
-  tabName = "hospit",
-  fluidRow(
-    column(6,plotOutput("hospitplot"),
-           downloadButton("downloadhospit"))
-  )
-)
-
+# hospittab <- tabItem(
+#   tabName = "hospit",
+#   fluidRow(
+#     column(6,plotOutput("hospitplot"),
+#            downloadButton("downloadhospit"))
+#   )
+# )
+# 
 
 body <- dashboardBody(
   tabItems(
     agetab,
-    testtab,
-    hospittab
+    testtab#,
+    #hospittab
   )
 ) # END dashboardBody
 

@@ -29,15 +29,15 @@ rawtest <- tryCatch(
   group_by(DATE) %>%
   summarise(TESTS_ALL = sum(TESTS_ALL, na.rm = TRUE))
 
-rawhospit <- tryCatch(
-  read.csv("https://epistat.sciensano.be/Data/COVID19BE_HOSP.csv",
-           fileEncoding = "UTF8"),
-  error = function(e){}, warning = function(w){
-    stop("The data file could not be downloaded. The server of epistat might be temporarily down. Check whether you can access\nhttps://epistat.wiv-isp.be/Covid/",
-         call. = FALSE)
-  }) %>%
-  mutate(DATE = as.Date(DATE)) %>%
-  filter(!is.na(DATE) & DATE < Sys.Date()-1)
+# rawhospit <- tryCatch(
+#   read.csv("https://epistat.sciensano.be/Data/COVID19BE_HOSP.csv",
+#            fileEncoding = "UTF8"),
+#   error = function(e){}, warning = function(w){
+#     stop("The data file could not be downloaded. The server of epistat might be temporarily down. Check whether you can access\nhttps://epistat.wiv-isp.be/Covid/",
+#          call. = FALSE)
+#   }) %>%
+#   mutate(DATE = as.Date(DATE)) %>%
+#   filter(!is.na(DATE) & DATE < Sys.Date()-1)
 
 #----------------------------------------------------------------
 # Process the data :
@@ -113,25 +113,25 @@ cases <- rawcases %>%
 # Process data: hospitalisation
 
 
-totals <- rawhospit %>%
-  select(-c(PROVINCE,NR_REPORTING)) %>%
-  group_by(DATE) %>%
-  summarise(across(where(is.numeric), sum)) %>%
-  mutate(REGION = "All")
-
-hospit <- rbind(select(rawhospit, -c(PROVINCE,NR_REPORTING)),
-                totals) %>%
-  mutate(across(where(is.numeric),
-                ~ zoo::rollmean(., 7, align = "right",
-                                fill = NA))) %>%
-  na.omit()
+# totals <- rawhospit %>%
+#   select(-c(PROVINCE,NR_REPORTING)) %>%
+#   group_by(DATE) %>%
+#   summarise(across(where(is.numeric), sum)) %>%
+#   mutate(REGION = "All")
+# 
+# hospit <- rbind(select(rawhospit, -c(PROVINCE,NR_REPORTING)),
+#                 totals) %>%
+#   mutate(across(where(is.numeric),
+#                 ~ zoo::rollmean(., 7, align = "right",
+#                                 fill = NA))) %>%
+#   na.omit()
 
 message("Writing data...")
 write.csv(cases,
           file = paste0("Data/cases",Sys.Date(),".csv"))
 write.csv(allcases,
           file = paste0("Data/allcases",Sys.Date(),".csv"))
-write.csv(hospit,
-          file = paste0("Data/hospit", Sys.Date(), ".csv"))
+# write.csv(hospit,
+#           file = paste0("Data/hospit", Sys.Date(), ".csv"))
 
 message("Succes!")
