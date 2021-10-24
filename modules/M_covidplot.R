@@ -31,7 +31,8 @@ covidplotServer <-function(id, theplot, filename = "plot.png"){
       fullplot <- reactive({
         theplot() + 
           caption +
-          theme(plot.tag.position = "bottomright")
+          theme(plot.tag.position = "bottomright",
+                plot.background = element_rect(fill = "white"))
       })
       
       output$renderPlot({

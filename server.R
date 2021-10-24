@@ -86,7 +86,8 @@ function(input, output) {
             scale_x_date(date_labels = "%b %d") +
             fillscale +
             ggtitle(titl) + caption +
-            theme(plot.tag.position = "bottomright")
+            theme(plot.tag.position = "bottomright",
+                  plot.background = element_rect("white"))
         
         plotheatmap(plotheatmap)
         plotheatmap    
@@ -110,7 +111,8 @@ function(input, output) {
             # Format the X axis for dates
             scale_x_date(date_labels = "%b %d") +
             caption +
-            theme(plot.tag.position = "bottomright")
+            theme(plot.tag.position = "bottomright",
+                  plot.background = element_rect("white"))
         
         plotagebar(plotagebar)
         plotagebar
@@ -142,7 +144,8 @@ function(input, output) {
             (p2 + ggtitle("Evolution of Belgian covid tests and cases")) / p1 +
             plot_layout(heights = c(1,8), guides = 'collect') +
             caption +
-            theme(plot.tag.position = "bottomright")
+            theme(plot.tag.position = "bottomright",
+                  plot.background = element_rect("white"))
         
         plottests(plottests)
         plottests

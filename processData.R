@@ -53,14 +53,14 @@ replaceby0 <- function(x){
 }
 
 # Calculate the change
-changeabsolute <- function(x){
+changeabsolute <- function(x,k=7){
   n <- length(x)
-  c(rep(NA,7), (x[8:n] - x[1:(n-7)]))
+  c(rep(NA,k), (x[(k+1):n] - x[1:(n-k)]))
 }
   
-changepercent <- function(x){
+changepercent <- function(x, k = 7){
   n <- length(x)
-  c(rep(NA,7), (x[8:n] - x[1:(n-7)])/ x[1:(n-7)] * 100 )
+  c(rep(NA,k), (x[(k+1):n] - x[1:(n-k)])/ x[1:(n-k)] * 100 )
 }
 
 #---------------------------------
@@ -106,9 +106,9 @@ cases <- rawcases %>%
   na.omit() %>%
   left_join(n, by = c("AGEGROUP","REGION","GENDER")) %>%
   mutate(RELCASES = CASES/POP * 100000,
-         CHANGE = changeabsolute(CASES),
-         RELCHANGE = changeabsolute(RELCASES),
-         PERCHANGE = changepercent(CASES))
+         CHANGE = changeabsolute(CASES, k = 7),
+         RELCHANGE = changeabsolute(RELCASES, k = 7),
+         PERCHANGE = changepercent(CASES, k = 7))
 
 # Process data: hospitalisation
 
